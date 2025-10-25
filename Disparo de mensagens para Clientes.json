@@ -1,39 +1,69 @@
-{
-  "name": "Disparo de mensagens para Clientes - Sanitizado",
+
+  "name": "Disparo de mensagens para Clientes",
   "nodes": [
     {
       "parameters": {
-        "operation": "getAll",
-        "documentId": "{{GOOGLE_SHEET_ID_CLIENTES}}",
-        "sheetName": "{{GOOGLE_SHEET_TAB}}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.7,
-      "position": [80, 0],
-      "name": "Dados Clientes"
-    },
-    {
-      "parameters": {
         "conditions": {
-          "options": {},
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
           "conditions": [
             {
+              "id": "169b27c1-4e25-463d-a332-bc733aca7119",
               "leftValue": "={{ $json.Telefone }}",
-              "operator": { "type": "boolean", "operation": "isEmpty" }
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "ec9bf933-475b-4bd0-9528-aa88cf7fc712",
+              "leftValue": "={{ $json.Nome }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "8b3b8080-a3a7-46dc-bb0c-82eb4bd270b5",
+              "leftValue": "={{ $json.RespostaTexto }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
             }
-          ]
-        }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [448, 0],
+      "position": [
+        0,
+        192
+      ],
+      "id": "1cabb0ab-bb16-45d0-be82-26c5f3a1e11b",
       "name": "If"
     },
     {
       "parameters": {},
       "type": "n8n-nodes-base.noOp",
-      "position": [768, -192],
+      "typeVersion": 1,
+      "position": [
+        320,
+        0
+      ],
+      "id": "43ed29a3-7af3-409e-8d8e-f6a7d52f58da",
       "name": "Não faz nada"
     },
     {
@@ -41,120 +71,404 @@
         "options": {}
       },
       "type": "n8n-nodes-base.splitInBatches",
-      "position": [1072, 16],
+      "typeVersion": 3,
+      "position": [
+        624,
+        208
+      ],
+      "id": "06b57466-4193-4bfa-8006-0150b3e9cfdc",
       "name": "Loop para tabela"
     },
     {
       "parameters": {
         "assignments": {
           "assignments": [
-            { "name": "Nome", "value": "={{ $json.Nome }}", "type": "string" },
-            { "name": "Telefone", "value": "={{ $json.Telefone }}", "type": "string" },
-            { "name": "enderecoCliente", "value": "={{ $json.Endereço }}", "type": "string" }
+            {
+              "id": "2cba9244-4b28-4f84-af56-7de93f91e362",
+              "name": "Nome",
+              "value": "={{ $json.Nome }}",
+              "type": "string"
+            },
+            {
+              "id": "5a868f54-b277-4a16-9931-3789b50d5fd0",
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}",
+              "type": "string"
+            },
+            {
+              "id": "e9e68efe-f44d-4a1d-87d8-e1bf2a578f59",
+              "name": "tentativas",
+              "value": "={{ $json.Tentativas }}",
+              "type": "string"
+            },
+            {
+              "id": "ceab1877-4420-47ac-afe0-328c76ef95f7",
+              "name": "primeiroEnvio",
+              "value": "={{ $json.PrimeiroEnvio }}",
+              "type": "string"
+            },
+            {
+              "id": "4742d59c-6d35-41d8-a26e-635dbfc8b48f",
+              "name": "ultimoEnvio",
+              "value": "={{ $json.UltimoEnvio }}",
+              "type": "string"
+            },
+            {
+              "id": "249bcdfe-ca6c-482e-893a-edaf2b4ec4f7",
+              "name": "proximoEnvio",
+              "value": "={{ $json.ProximoEnvio }}",
+              "type": "string"
+            },
+            {
+              "id": "3d2c214a-cadb-4a93-b45c-2e6886b2a052",
+              "name": "respostaTexto",
+              "value": "={{ $json.RespostaTexto }}",
+              "type": "string"
+            },
+            {
+              "id": "8305fed2-700f-485f-bcfe-b65ef9ca126b",
+              "name": "respostaData",
+              "value": "={{ $json.RespostaData }}",
+              "type": "string"
+            },
+            {
+              "id": "65a6c1c1-b51a-44f5-8515-23190d5801f8",
+              "name": "SA",
+              "value": "={{ $json.SA }}",
+              "type": "string"
+            },
+            {
+              "id": "9729dcf0-6c0a-42a6-af2b-8e188a45a877",
+              "name": "enderecoCliente",
+              "value": "={{ $json['Endereço'] }}",
+              "type": "string"
+            }
           ]
-        }
+        },
+        "options": {}
       },
       "type": "n8n-nodes-base.set",
-      "position": [-176, 240],
+      "typeVersion": 3.4,
+      "position": [
+        -624,
+        432
+      ],
+      "id": "5e48b1c7-c9c4-465e-ba11-e8c2d8aa85ee",
       "name": "Formata itens"
     },
     {
       "parameters": {
-        "jsCode": "return items.map(item => {\n  let tel = item.json.Telefone || \"\";\n  tel = tel.replace(/\\D/g, \"\");\n  if (tel.startsWith(\"0\")) tel = tel.slice(1);\n  if (!tel.startsWith(\"55\")) tel = \"55\" + tel;\n  item.json.Telefone = \"+\" + tel;\n  const nome = item.json.Nome ? item.json.Nome.split(\" \")[0] : \"\";\n  const endereco = item.json.enderecoCliente || \"{endereço}\";\n  const mensagem =\n`Olá ${nome}, somos da Desktop Internet. \nEstamos entrando em contato porque precisamos agendar a retirada do equipamento que ficou no endereço ${endereco}. \nEssa retirada é importante para não haver cobranças futuras. \nPodemos agendar uma data para retirada?`;\n  item.json.Mensagem = mensagem.replace(/\\n/g, '\\\\n');\n  return item;\n})"
-      },
-      "type": "n8n-nodes-base.code",
-      "position": [80, 240],
-      "name": "Formata telefone e mensagem"
-    },
-    {
-      "parameters": {
         "method": "POST",
-        "url": "https://api.z-api.io/instances/{{ZAPI_INSTANCE_ID}}/token/{{ZAPI_TOKEN}}/send-text",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={ \"phone\": \"{{ $json.Telefone }}\", \"message\": \"{{ $json.Mensagem }}\" }"
+        "jsonBody": "={\n  \"phone\": \"{{ $json.Telefone }}\",\n  \"message\": \"{{ $json.Mensagem.replace(/\\n/g, '\\\\n') }}\"\n}\n\n\n\n\n\n",
+        "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
-      "position": [352, 240],
+      "typeVersion": 4.2,
+      "position": [
+        -96,
+        432
+      ],
+      "id": "2f0f9321-e6be-4fe0-8eee-7005bb829ccf",
       "name": "Envia Mensagem"
     },
     {
       "parameters": {},
       "type": "n8n-nodes-base.noOp",
-      "position": [1072, 240],
-      "name": "Replace Me"
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        624,
+        432
+      ],
+      "id": "b6db6b44-0f72-4bf9-a23c-1f49ee07acbe"
     },
     {
       "parameters": {
         "amount": 3
       },
       "type": "n8n-nodes-base.wait",
-      "position": [1264, 240],
-      "name": "Espera próximo item"
+      "typeVersion": 1.1,
+      "position": [
+        816,
+        432
+      ],
+      "id": "701b761a-f5e4-4673-9a58-ef85cd074e17",
+      "name": "Espera próximo item",
+      "webhookId": "064654a1-b74b-4077-85b0-e51eb6d6e77b"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -368,
+        192
+      ],
+      "id": "69c4dba4-f89c-45fb-b07b-36de41b1404d",
+      "name": "Dados Clientes"
     },
     {
       "parameters": {
         "operation": "update",
-        "documentId": "{{GOOGLE_SHEET_ID_ENVIO}}",
-        "sheetName": "{{GOOGLE_SHEET_TAB}}",
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "Telefone": "={{ $json.Telefone }}",
-            "Tentativas": "={{ $json.Tentativas }}"
-          },
-          "matchingColumns": ["Telefone"]
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "url"
         }
       },
       "type": "n8n-nodes-base.googleSheets",
-      "position": [832, 240],
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        432
+      ],
+      "id": "c4b1701e-cace-474c-9f20-d8c770d608db",
       "name": "Dados de Envio"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  let tel = item.json.Telefone || \"\";\n\n  // --- FORMATAÇÃO DE TELEFONE ---\n  tel = tel.replace(/\\D/g, \"\");\n  if (tel.startsWith(\"0\")) tel = tel.slice(1);\n  if (tel.length === 9) tel = \"11\" + tel;\n  if (!tel.startsWith(\"55\")) tel = \"55\" + tel;\n  item.json.Telefone = \"+\" + tel;\n\n  // --- SAUDAÇÃO COM FUSO HORÁRIO DO BRASIL ---\n  const agora = new Date(new Date().toLocaleString(\"en-US\", { timeZone: \"America/Sao_Paulo\" }));\n  const hora = agora.getHours();\n  let saudacao = \"Olá\";\n\n  if (hora >= 5 && hora < 12) saudacao = \"Bom dia\";\n  else if (hora >= 12 && hora < 18) saudacao = \"Boa tarde\";\n  else saudacao = \"Boa noite\";\n\n  // --- DADOS DO CLIENTE ---\n  const nome = item.json.Nome ? item.json.Nome.split(\" \")[0] : \"\";\n  const endereco = item.json.enderecoCliente || \"{endereço}\";\n\n  // --- MENSAGEM FORMATADA ---\n  const mensagem =\n`${saudacao} ${nome ? nome + \",\" : \"\"} somos da Desktop Internet. \nEstamos entrando em contato porque precisamos agendar a retirada do equipamento que ficou no endereço ${endereco}. \nEssa retirada é importante para não haver cobranças futuras. \nPodemos agendar uma data para retirada?`;\n\n  // Mantém as quebras de linha no envio\n  item.json.Mensagem = mensagem.replace(/\\n/g, '\\\\n');\n\n  return item;\n});\n\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -368,
+        432
+      ],
+      "id": "71876279-3d77-4897-8314-7122da749b74",
+      "name": "Formata telefone e mensagem"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Atualiza contadores e datas no item antes de enviar ao Google Sheets.\n// Usa timezone America/Sao_Paulo e formata em \"YYYY-MM-DD HH:mm:ss\" (fácil leitura).\nreturn items.map(item => {\n  // 1) Hora atual (no fuso de Brasília)\n  const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));\n  const nowLocal = now.toISOString().replace('T', ' ').slice(0, 19);\n\n  // 2) Ler tentativas atuais\n  let attempts = parseInt(item.json.tentativas, 10);\n  if (isNaN(attempts)) attempts = 0;\n\n  // 3) Incrementar tentativas\n  attempts += 1;\n  item.json.Tentativas = String(attempts);\n\n  // 4) Primeiro envio\n  const primeiroAtual = item.json.PrimeiroEnvio || item.json.primeiroEnvio || \"\";\n  if (!primeiroAtual) {\n    item.json.PrimeiroEnvio = nowLocal;\n  } else {\n    item.json.PrimeiroEnvio = primeiroAtual;\n  }\n\n  // 5) Último envio\n  item.json.UltimoEnvio = nowLocal;\n\n  // 6) Próximo envio — horários fixos (08:00, 14:00, 20:00)\n  const proximoEnvio = (() => {\n    const horarios = [8, 14, 20]; // horas fixas\n    const horaAtual = now.getHours();\n\n    // encontra o próximo horário válido no mesmo dia\n    const proxHora = horarios.find(h => horaAtual < h);\n\n    let proximaData = new Date(now);\n    if (proxHora) {\n      // ainda hoje\n      proximaData.setHours(proxHora, 0, 0, 0);\n    } else {\n      // já passou das 20h → agenda para o dia seguinte às 8h\n      proximaData.setDate(proximaData.getDate() + 1);\n      proximaData.setHours(8, 0, 0, 0);\n    }\n\n    // formato final\n    return proximaData.toISOString().replace('T', ' ').slice(0, 19);\n  })();\n\n  item.json.ProximoEnvio = proximoEnvio;\n\n  return item;\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        144,
+        432
+      ],
+      "id": "b588870f-d416-43f0-80ca-b67b8ed28705",
+      "name": "Atualiza dados planilha"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "=0 8,14,20 * * 1-5\n"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -640,
+        192
+      ],
+      "id": "f5ca1734-6f46-4b89-a3e9-f31151d27e29",
+      "name": "Executa a cada 6 horas (Cron)",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "notes": "Gatilho para enviar mensagem 3 vezes no dia para os clientes a cada 6 horas.\n\n8:00 - 14:00 - 20:00"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "url"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9a227433-c3b6-453c-a55d-e315d07bf0ab",
+      "name": "Contato Inválido ou já executado"
     }
   ],
+  "pinData": {},
   "connections": {
-    "Dados Clientes": { "main": [{ "node": "If", "type": "main" }] },
     "If": {
       "main": [
-        [{ "node": "Não faz nada", "type": "main" }],
-        [{ "node": "Loop para tabela", "type": "main" }]
+        [
+          {
+            "node": "Contato Inválido ou já executado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop para tabela",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Loop para tabela": {
       "main": [
         [],
-        [{ "node": "Formata itens", "type": "main" }]
+        [
+          {
+            "node": "Formata itens",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Formata itens": {
       "main": [
-        [{ "node": "Formata telefone e mensagem", "type": "main" }]
-      ]
-    },
-    "Formata telefone e mensagem": {
-      "main": [
-        [{ "node": "Envia Mensagem", "type": "main" }]
+        [
+          {
+            "node": "Formata telefone e mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Envia Mensagem": {
       "main": [
-        [{ "node": "Dados de Envio", "type": "main" }]
-      ]
-    },
-    "Dados de Envio": {
-      "main": [
-        [{ "node": "Replace Me", "type": "main" }]
+        [
+          {
+            "node": "Atualiza dados planilha",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Replace Me": {
       "main": [
-        [{ "node": "Espera próximo item", "type": "main" }]
+        [
+          {
+            "node": "Espera próximo item",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Espera próximo item": {
       "main": [
-        [{ "node": "Loop para tabela", "type": "main" }]
+        [
+          {
+            "node": "Loop para tabela",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados Clientes": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados de Envio": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formata telefone e mensagem": {
+      "main": [
+        [
+          {
+            "node": "Envia Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza dados planilha": {
+      "main": [
+        [
+          {
+            "node": "Dados de Envio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Executa a cada 6 horas (Cron)": {
+      "main": [
+        [
+          {
+            "node": "Dados Clientes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contato Inválido ou já executado": {
+      "main": [
+        [
+          {
+            "node": "Não faz nada",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     }
   },
-  "active": false
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d295d834-072c-421d-83fe-8d2bfed89a67",
+  "meta": {
+    "instanceId": "25b457b3ca883af8564e3cbd604b8d794598e992e31ded1f3527eec9b0f2652c"
+  },
+  "id": "OfD3sa4eKBS6117m",
+  "tags": []
 }
