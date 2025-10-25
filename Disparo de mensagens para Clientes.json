@@ -1,0 +1,444 @@
+{
+  "name": "Disparo de mensagens para Clientes",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "169b27c1-4e25-463d-a332-bc733aca7119",
+              "leftValue": "={{ $json.Telefone }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "ec9bf933-475b-4bd0-9528-aa88cf7fc712",
+              "leftValue": "={{ $json.Nome }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        656,
+        176
+      ],
+      "id": "15f8c849-455f-4b48-9966-47fe98f084f9",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        976,
+        -16
+      ],
+      "id": "f54589bf-f90c-47cc-a0d8-923dd0538ae2",
+      "name": "Não faz nada"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        192
+      ],
+      "id": "8f94116f-3f86-4c58-a900-a32b46991ebc",
+      "name": "Loop para tabela"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2cba9244-4b28-4f84-af56-7de93f91e362",
+              "name": "Nome",
+              "value": "={{ $json.Nome }}",
+              "type": "string"
+            },
+            {
+              "id": "5a868f54-b277-4a16-9931-3789b50d5fd0",
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        32,
+        416
+      ],
+      "id": "cfdd2dc4-0004-479f-998d-7a5b9aff5ff2",
+      "name": "Formata itens"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "sua-instancia",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Client-Token"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phone\": \"{{ $json.Telefone }}\",\n  \"message\": \"{{ $json.Mensagem.replace(/\\n/g, '\\\\n') }}\"\n}\n\n\n\n\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        416
+      ],
+      "id": "de944f14-fc5e-41b0-b874-45805df5e9f0",
+      "name": "Envia Mensagem"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        416
+      ],
+      "id": "6193b526-829b-4459-b176-82799d016694"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1472,
+        416
+      ],
+      "id": "b8c38129-7d1d-413b-a6b5-a8ce5b76d423",
+      "name": "Espera próximo item",
+      "webhookId": "064654a1-b74b-4077-85b0-e51eb6d6e77b"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "link da planilha",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        288,
+        176
+      ],
+      "id": "a6bb9712-181e-4481-b16e-7286456bb78b",
+      "name": "Dados Clientes"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "link da planilha",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "link da planilha",
+          "mode": "url"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1040,
+        416
+      ],
+      "id": "c00f9a1e-c16e-47ad-8f91-015d1b454d09",
+      "name": "Dados de Envio"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  let tel = item.json.Telefone || \"\";\n\n  // --- FORMATAÇÃO DE TELEFONE ---\n  tel = tel.replace(/\\D/g, \"\");\n  if (tel.startsWith(\"0\")) tel = tel.slice(1);\n  if (tel.length === 9) tel = \"11\" + tel;\n  if (!tel.startsWith(\"55\")) tel = \"55\" + tel;\n  item.json.Telefone = \"+\" + tel;\n\n  // --- SAUDAÇÃO COM FUSO HORÁRIO DO BRASIL ---\n  const agora = new Date(new Date().toLocaleString(\"en-US\", { timeZone: \"America/Sao_Paulo\" }));\n  const hora = agora.getHours();\n  let saudacao = \"Olá\";\n\n  if (hora >= 5 && hora < 12) saudacao = \"Bom dia\";\n  else if (hora >= 12 && hora < 18) saudacao = \"Boa tarde\";\n  else saudacao = \"Boa noite\";\n\n  // --- DADOS DO CLIENTE ---\n  const nome = item.json.Nome ? item.json.Nome.split(\" \")[0] : \"\";\n  const endereco = item.json.enderecoCliente || \"{endereço}\";\n\n  // --- MENSAGEM FORMATADA ---\n  const mensagem =\n`${saudacao} ${nome ? nome + \",\" : \"\"} somos da Desktop Internet. \nEstamos entrando em contato porque precisamos agendar a retirada do equipamento que ficou no endereço ${endereco}. \nEssa retirada é importante para não haver cobranças futuras. \nPodemos agendar uma data para retirada?`;\n\n  // Mantém as quebras de linha no envio\n  item.json.Mensagem = mensagem.replace(/\\n/g, '\\\\n');\n\n  return item;\n});\n\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        288,
+        416
+      ],
+      "id": "b30e236c-a74a-424f-9b5d-cff487e86120",
+      "name": "Formata telefone e mensagem"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Atualiza contadores e datas no item antes de enviar ao Google Sheets.\n// Usa timezone America/Sao_Paulo e formata em \"YYYY-MM-DD HH:mm:ss\" (fácil leitura).\nreturn items.map(item => {\n  // 1) Hora atual (no fuso de Brasília)\n  const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));\n  const nowLocal = now.toISOString().replace('T', ' ').slice(0, 19);\n\n  // 2) Ler tentativas atuais\n  let attempts = parseInt(item.json.tentativas, 10);\n  if (isNaN(attempts)) attempts = 0;\n\n  // 3) Incrementar tentativas\n  attempts += 1;\n  item.json.Tentativas = String(attempts);\n\n  // 4) Primeiro envio\n  const primeiroAtual = item.json.PrimeiroEnvio || item.json.primeiroEnvio || \"\";\n  if (!primeiroAtual) {\n    item.json.PrimeiroEnvio = nowLocal;\n  } else {\n    item.json.PrimeiroEnvio = primeiroAtual;\n  }\n\n  // 5) Último envio\n  item.json.UltimoEnvio = nowLocal;\n\n  // 6) Próximo envio — horários fixos (08:00, 14:00, 20:00)\n  const proximoEnvio = (() => {\n    const horarios = [8, 14, 20]; // horas fixas\n    const horaAtual = now.getHours();\n\n    // encontra o próximo horário válido no mesmo dia\n    const proxHora = horarios.find(h => horaAtual < h);\n\n    let proximaData = new Date(now);\n    if (proxHora) {\n      // ainda hoje\n      proximaData.setHours(proxHora, 0, 0, 0);\n    } else {\n      // já passou das 20h → agenda para o dia seguinte às 8h\n      proximaData.setDate(proximaData.getDate() + 1);\n      proximaData.setHours(8, 0, 0, 0);\n    }\n\n    // formato final\n    return proximaData.toISOString().replace('T', ' ').slice(0, 19);\n  })();\n\n  item.json.ProximoEnvio = proximoEnvio;\n\n  return item;\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        416
+      ],
+      "id": "a066a17e-9ab3-4fd4-8d34-7a361fdf749f",
+      "name": "Atualiza dados planilha"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "=0 8,14,20 * * 1-5\n"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        16,
+        176
+      ],
+      "id": "83336c5f-4261-4e84-b568-0f7de5ccc7d7",
+      "name": "Executa a cada 6 horas (Cron)",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "notes": "Gatilho para enviar mensagem 3 vezes no dia para os clientes a cada 6 horas.\n\n8:00 - 14:00 - 20:00"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "link da planilha",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "link da planilha",
+          "mode": "url"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        656,
+        -16
+      ],
+      "id": "5c980c1e-e689-4f2a-8eb9-69d6105436e5",
+      "name": "Contato Inválido ou já executado"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Contato Inválido ou já executado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop para tabela",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop para tabela": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Formata itens",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formata itens": {
+      "main": [
+        [
+          {
+            "node": "Formata telefone e mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Mensagem": {
+      "main": [
+        [
+          {
+            "node": "Atualiza dados planilha",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Espera próximo item",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Espera próximo item": {
+      "main": [
+        [
+          {
+            "node": "Loop para tabela",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados Clientes": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados de Envio": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formata telefone e mensagem": {
+      "main": [
+        [
+          {
+            "node": "Envia Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza dados planilha": {
+      "main": [
+        [
+          {
+            "node": "Dados de Envio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Executa a cada 6 horas (Cron)": {
+      "main": [
+        [
+          {
+            "node": "Dados Clientes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contato Inválido ou já executado": {
+      "main": [
+        [
+          {
+            "node": "Não faz nada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d6188a24-09cf-4092-881f-5fdd485f760b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "25b457b3ca883af8564e3cbd604b8d794598e992e31ded1f3527eec9b0f2652c"
+  },
+  "id": "jOKJhrlpW0KhNtmB",
+  "tags": []
+}
